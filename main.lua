@@ -1,5 +1,3 @@
-local Class = require 'hump.class'
-
 -- Globals:
 ----------:
 ScreenWidth = 640
@@ -13,30 +11,33 @@ TileSize = 32
 --  * tileHeight:
 --  * image:
 --  * quads:
-local BTileSet = Class{}
+local BTileSet = {}
+BTileSet.__index = BTileSet
 
 -- BTileSet.create Parameters:
 -----------------------------:
 --- * file: Path to the image
 --- * tileWidth:
 --- * tileHeight:
-function BTileSet:init(file, tileWidth, tileHeight)
-  self.file = file
-  self.tileWidth = tileWidth
-  self.tileHeight = tileHeight
-  self.image = love.graphics.newImage(file)
-  self.quads = {}
-  local selfWidth, selfHeight = self.image:getWidth(), self.image:getHeight()
-  local columns, rows = (selfWidth / tileWidth), (selfHeight / tileHeight)
+function BTileSet.create(file, tileWidth, tileHeight)
+  local ts = setmetatable({}, BTileSet)
+  ts.file = file
+  ts.tileWidth = tileWidth
+  ts.tileHeight = tileHeight
+  ts.image = love.graphics.newImage(file)
+  ts.quads = {}
+  local tsWidth, tsHeight = ts.image:getWidth(), ts.image:getHeight()
+  local columns, rows = (tsWidth / tileWidth), (tsHeight / tileHeight)
   local quadCount = 1
   for i = 1, rows do
     for j = 1, columns do
       local x, y = (j-1) * tileHeight, (i-1) * tileWidth
-      self.quads[quadCount] = love.graphics.newQuad(
-        x, y, tileWidth, tileHeight, selfWidth, selfHeight)
+      ts.quads[quadCount] = love.graphics.newQuad(
+        x, y, tileWidth, tileHeight, tsWidth, tsHeight)
       quadCount = quadCount + 1
     end
   end
+  return ts
 end
 
 -- BTileSet:drawQuad Parameters:
@@ -44,7 +45,7 @@ end
 -- * index:
 -- * row:
 -- * col:
-function BTileSet:drawQuad(index, r, c)
+function BTileSet.drawQuad(self, index, r, c)
   local x, y = (r-1) * self.tileWidth, (c-1) * self.tileHeight
   love.graphics.draw(self.image, self.quads[index], x, y)
 end
@@ -80,7 +81,7 @@ ABoard = {
 function love.load()
   love.window.setMode(ScreenWidth, ScreenHeight)
   TheMap = {
-    tileset = BTileSet("tileset.png", TileSize, TileSize),
+    tileset = BTileSet.create("tileset.png", TileSize, TileSize),
     board = ABoard
   }
 end
