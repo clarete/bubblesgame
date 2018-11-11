@@ -78,6 +78,12 @@ ABoard = {
   {1, 1, 1, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 4, 5, 3, 3, 1, 1, 1}
 }
 
+function love.keypressed(k)
+  if k == "escape" then
+    love.event.quit()
+  end
+end
+
 function love.load()
   love.window.setMode(ScreenWidth, ScreenHeight)
   TheMap = {
