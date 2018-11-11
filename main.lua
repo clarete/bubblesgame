@@ -45,7 +45,7 @@ end
 -- * index:
 -- * row:
 -- * col:
-function BTileSet.drawQuad(self, index, r, c)
+function BTileSet:drawQuad(index, r, c)
   local x, y = (r-1) * self.tileWidth, (c-1) * self.tileHeight
   love.graphics.draw(self.image, self.quads[index], x, y)
 end
