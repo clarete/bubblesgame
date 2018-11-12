@@ -30,14 +30,13 @@ function BTileSet.create(file, tileWidth, tileHeight)
   ts.image = love.graphics.newImage(file)
   ts.quads = {}
   local tsWidth, tsHeight = ts.image:getWidth(), ts.image:getHeight()
-  local columns, rows = (tsWidth / tileWidth), (tsHeight / tileHeight)
-  local quadCount = 1
+  local columns, rows = tsWidth / tileWidth, tsHeight / tileHeight
   for i = 1, rows do
     for j = 1, columns do
       local x, y = (j-1) * tileHeight, (i-1) * tileWidth
-      ts.quads[quadCount] = love.graphics.newQuad(
-        x, y, tileWidth, tileHeight, tsWidth, tsHeight)
-      quadCount = quadCount + 1
+      table.insert(ts.quads, love.graphics.newQuad(
+                     x, y, tileWidth, tileHeight,
+                     tsWidth, tsHeight))
     end
   end
   return ts
