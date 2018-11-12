@@ -1,0 +1,2 @@
+anim8.lua: https://github.com/kikito/anim8/blob/c1c12ec45fde28ffd2d6967675adcb3c3e501fa7/anim8.lua
+bump.lua: https://github.com/kikito/bump.lua/blob/48c8ecda64bfbb9bc65078984aee54442d4bd529/bump.lua
