@@ -33,6 +33,7 @@ function BPlayer.create(file, w, h, x, y)
     idleflip = anim8.newAnimation(grid('1-1', 1), 0.2):flipH(),
     walk = anim8.newAnimation(grid('1-3', 1), 0.15),
     walkflip = anim8.newAnimation(grid('1-3', 1), 0.15):flipH(),
+    jump = anim8.newAnimation(grid('4-4', 1), 0.2)
   }
   player.animation = player.animations.idle
   return player
@@ -113,6 +114,9 @@ function BPlayer:updateAnimation(dt)
     else
       self.animation = self.animations.idle
     end
+  end
+  if self.ymov then
+      self.animation = self.animations.jump
   end
   self.animation:update(dt)
 end
