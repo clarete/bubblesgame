@@ -60,7 +60,7 @@ function drawLifeBar()
 end
 
 function spawnHero()
-  theHero = BPlayer.create("hero.png", TileSize, TileSize)
+  theHero = BPlayer.create("hero.png", 12, 32)
   theHero:addToWorld(theWorld)
 end
 
