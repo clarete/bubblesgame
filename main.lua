@@ -53,12 +53,32 @@ function BTileSet:drawQuad(index, r, c)
   return {x=x, y=y, w=self.tileWidth, h=self.tileHeight}
 end
 
+function drawLifeBar()
+  love.graphics.print(
+    ("Life: %d"):format(lifeCount),
+    ScreenWidth - 50, 15)
+end
+
+function spawnHero()
+  theHero = BPlayer.create("hero.png", TileSize, TileSize)
+  theHero:addToWorld(theWorld)
+end
+
+-- Tiles that are not supposed to have colision (water tiles)
+NONO = {
+  [4]=true,
+  [5]=true,
+  [8]=true,
+}
+
 function drawMap(m)
   for rowIndex, row in ipairs(m.board) do
     for columnIndex, quadIndex in ipairs(row) do
       if quadIndex > 0 then
         local block = m.tileset:drawQuad(quadIndex, columnIndex, rowIndex)
-        theWorld:add(block, block.x, block.y, block.w, block.h)
+        if not NONO[quadIndex] then
+          theWorld:add(block, block.x, block.y, block.w, block.h)
+        end
       end
     end
   end
@@ -86,24 +106,54 @@ function love.keypressed(k)
   if k == "escape" then
     love.event.quit()
   end
+
+  if k == "r" then
+    gameOver = false
+    lifeCount = 3
+    spawnHero()
+  end
 end
 
 function love.load()
   love.window.setMode(ScreenWidth, ScreenHeight)
   theWorld = bump.newWorld(TileSize)
-  theHero = BPlayer.create("hero.png", TileSize, TileSize)
-  theHero:addToWorld(theWorld)
   theMap = {
     tileset = BTileSet.create("tileset.png", TileSize, TileSize),
     board = ABoard
   }
+
+  -- Game state
+  spawnHero()
+  lifeCount = 3
+  gameOver = false
 end
 
 function love.update(dt)
-  theHero:update(dt, theWorld)
+  if theHero == nil then
+    return
+  elseif theHero.y + theHero.h > ScreenHeight then
+    theHero:die(theWorld)
+    theHero = nil
+
+    -- Decrement life and maybe declare game over
+    lifeCount = lifeCount - 1
+    if lifeCount == 0 then
+      gameOver = true
+    else
+      spawnHero()
+    end
+  else
+    theHero:update(dt, theWorld)
+  end
 end
 
 function love.draw()
-  drawMap(theMap)
-  theHero:draw()
+  if gameOver then
+    love.graphics.print("YOU SO DEAD :(", ScreenWidth / 2 - 50, ScreenHeight / 2)
+    love.graphics.print("Press 'r' to restart", ScreenWidth / 2 - 50, ScreenHeight / 2 + 20)
+  else
+    drawMap(theMap)
+    drawLifeBar()
+    theHero:draw()
+  end
 end

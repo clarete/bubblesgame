@@ -54,6 +54,16 @@ function BPlayer:addToWorld(w)
   w:add(self, self.x, self.y, self.w, self.h)
 end
 
+function BPlayer:die(w)
+  self.x = 0
+  self.y = 0
+  self.xvel = 0
+  self.yvel = 0
+  self.xmov = false
+  self.ymov = false
+  w:remove(self)
+end
+
 function anykey(...)
   local keys = {...}
   for i=1, #keys do
