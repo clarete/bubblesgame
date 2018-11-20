@@ -116,7 +116,7 @@ function love.keypressed(k)
     love.event.quit()
   end
 
-  if k == "r" then
+  if k == "r" and gameOver then
     gameOver = false
     lifeCount = 3
     spawnHero()
