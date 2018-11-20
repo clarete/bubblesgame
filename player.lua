@@ -1,5 +1,6 @@
 -- Libraries
 local anim8 = require 'libs.anim8'
+local lua = require 'lua'
 
 -- Constants
 local GRAVITY = 9.8 * 64
@@ -100,7 +101,9 @@ function BPlayer:move(dt, w)
   -- Apply collision detection
   self.x, self.y, cols = w:move(self, self.x, self.y)
   -- Check for collisions
-  for i,v in ipairs(cols) do
+  for i, v in ipairs(cols) do
+    lua.tprint(v.other)
+    -- lua.tprint(lua.tablekeys(v))
     if cols[i].normal.y == -1 then
       self.yvel = 0
       self.ymov = false

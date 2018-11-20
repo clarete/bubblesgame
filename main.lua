@@ -1,4 +1,5 @@
 local bump = require 'libs.bump'
+local lua = require 'lua'
 local BPlayer = require 'player'
 
 -- Globals:
@@ -64,11 +65,18 @@ function spawnHero()
   theHero:addToWorld(theWorld)
 end
 
--- Tiles that are not supposed to have colision (water tiles)
-NONO = {
-  [4]=true,
-  [5]=true,
-  [8]=true,
+QUAD_NAMES = {
+  [1]="filling",
+  [2]="floor",
+  [3]="floor-low",
+  [4]="floor-edge-left",
+  [5]="floor-edge-right",
+  [6]="water-concave-left",
+  [7]="water-concave-right",
+  [8]="water-full",
+  [9]="bubblegum-left",
+  [10]="bubblebum-full",
+  [11]="bubblebum-left",
 }
 
 function drawMap(m)
@@ -76,7 +84,8 @@ function drawMap(m)
     for columnIndex, quadIndex in ipairs(row) do
       if quadIndex > 0 then
         local block = m.tileset:drawQuad(quadIndex, columnIndex, rowIndex)
-        if not NONO[quadIndex] then
+        block.name = QUAD_NAMES[quadIndex];
+        if not lua.sswith(block.name, 'water') then
           theWorld:add(block, block.x, block.y, block.w, block.h)
         end
       end
@@ -94,12 +103,12 @@ ABoard = {
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-  {3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0},
+  {2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0},
   {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
-  {1, 0, 0, 0, 0, 0, 0, 0, 6, 3, 3, 2, 0, 0, 0, 0, 1, 0, 0, 0},
-  {1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3},
-  {1, 3, 1, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1},
-  {1, 1, 1, 1, 4, 5, 1, 3, 3, 3, 3, 3, 3, 8, 8, 8, 1, 1, 1, 1}
+  {1, 0, 0, 0, 0, 0, 0, 0, 4, 2, 2, 5, 0, 0, 0, 0, 1, 0, 0, 0},
+  {1, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3},
+  {1, 0, 1, 1, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 1, 1, 1},
+  {1, 2, 1, 1, 6, 7, 1, 2, 2, 2, 2, 2, 1, 8, 8, 8, 1, 1, 1, 1}
 }
 
 function love.keypressed(k)
