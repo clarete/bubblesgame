@@ -152,6 +152,7 @@ function love.draw()
   if gameOver then
     love.graphics.print("YOU SO DEAD :(", ScreenWidth / 2 - 50, ScreenHeight / 2)
     love.graphics.print("Press 'r' to restart", ScreenWidth / 2 - 50, ScreenHeight / 2 + 20)
+    love.graphics.print("Or 'Esc' to quit", ScreenWidth / 2 - 50, ScreenHeight / 2 + 40)
   else
     drawMap(theMap)
     drawLifeBar()
