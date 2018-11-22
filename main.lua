@@ -106,15 +106,18 @@ ABoard = {
   {1, 2, 1, 1, 6, 7, 1, 2, 2, 2, 2, 2, 1, 8, 8, 8, 1, 1, 1, 1}
 }
 
+function startGameState()
+  lifeCount = 3
+  gameOver = false
+  theHero:spawn(theWorld)
+end
+
 function love.keypressed(k)
   if k == "escape" then
     love.event.quit()
   end
-
   if k == "r" and gameOver then
-    gameOver = false
-    lifeCount = 3
-    theHero:spawn(theWorld)
+    startGameState()
   end
 end
 
@@ -122,15 +125,11 @@ function love.load()
   love.window.setMode(ScreenWidth, ScreenHeight)
   theWorld = bump.newWorld(TileSize)
   theHero = BPlayer.create("hero.png", 12, 32)
-  theHero:spawn(theWorld)
   theMap = {
     tileset = BTileSet.create("tileset.png", TileSize, TileSize),
     board = ABoard
   }
-
-  -- Game state
-  lifeCount = 3
-  gameOver = false
+  startGameState()
 end
 
 function love.update(dt)
