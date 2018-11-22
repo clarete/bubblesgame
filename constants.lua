@@ -1,0 +1,2 @@
+GRAVITY = 9.8 * 64
+FRICTION = 10

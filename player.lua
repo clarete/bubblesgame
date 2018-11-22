@@ -1,10 +1,7 @@
 -- Libraries
 local anim8 = require 'libs.anim8'
 local lua = require 'lua'
-
--- Constants
-local GRAVITY = 9.8 * 64
-local FRICTION = 10
+local constants = require 'constants'
 
 -- The player abstraction
 local BPlayer = {}
@@ -27,6 +24,7 @@ function BPlayer.create(file, w, h, x, y)
   player.speed = 1000
   player.direction = 1
   player.jump = 300
+  player.isPlayer = true
   -- Graphics
   player.image = image
   player.animations = {

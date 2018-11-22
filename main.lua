@@ -57,7 +57,7 @@ end
 
 function drawGameBar()
   love.graphics.print(
-    ("Items: %d, Life: %d"):format(itemCount, lifeCount),
+    ("Items: %d, Life: %d"):format(#capturedItems, lifeCount),
     ScreenWidth - 100, 15)
 end
 
@@ -110,38 +110,52 @@ ABoard = {
 }
 
 function startGameState()
-  itemCount = 0
   lifeCount = 3
   gameOver = false
   local bbx, bby = theWorld:toWorld(2, 14)
-  local gum = BBGum.create("bubblegum.png", 24, 24, bbx+4, bby)
+  local gum = BBGum.create("bubblegum.png", 24, 24, bbx+4, bby+10)
   gum:spawn(theWorld)
-  visibleItems = { gum }
-
+  availableItems = { gum }
+  capturedItems = {}
   theHero:spawn(theWorld)
 end
 
-function drawVisibleItems()
-  for _, item in ipairs(visibleItems) do
+function drawItems()
+  for _, item in ipairs(availableItems) do
     item:draw()
   end
 end
 
-function updateVisibleItems(dt, w)
-  for i, item in ipairs(visibleItems) do
+function updateItems(dt, w)
+  for i, item in ipairs(availableItems) do
     item:update(dt, w)
     if not theWorld:hasItem(item) then
-      visibleItems[i] = nil
-      itemCount = itemCount + 1
+      table.insert(capturedItems, item)
+      availableItems[i] = nil
     end
   end
+end
+
+function dropItem()
+  if #capturedItems < 1 then return end
+  local item = table.remove(capturedItems)
+  local padding = 5
+  if theHero.direction > 0 then
+    item.x = theHero.x + (theHero.w + padding)
+  else
+    item.x = theHero.x - ((theHero.w * 2) + padding)
+  end
+  item.y = theHero.y + (theHero.h / 4)
+  table.insert(availableItems, item)
+  item:spawn(theWorld)
 end
 
 function love.keypressed(k)
   if k == "escape" then
     love.event.quit()
-  end
-  if k == "r" and gameOver then
+  elseif k == "i" then
+    dropItem()
+  elseif k == "r" and gameOver then
     startGameState()
   end
 end
@@ -162,7 +176,7 @@ function love.update(dt)
   -- We're done here
   if gameOver then return end
 
-  updateVisibleItems(dt, theWorld)
+  updateItems(dt, theWorld)
 
   if theHero:below(ScreenHeight) then
     theHero:die(theWorld)
@@ -185,7 +199,7 @@ function love.draw()
   else
     drawMap(theMap)
     drawGameBar()
-    drawVisibleItems()
+    drawItems()
     theHero:draw()
   end
 end
