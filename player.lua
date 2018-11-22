@@ -51,18 +51,18 @@ function BPlayer:physics(dt)
 end
 
 -- Add collision box to player
-function BPlayer:addToWorld(w)
+function BPlayer:spawn(w)
   w:add(self, self.x, self.y, self.w, self.h)
 end
 
 function BPlayer:die(w)
+  w:remove(self)
   self.x = 0
   self.y = 0
   self.xvel = 0
   self.yvel = 0
   self.xmov = false
   self.ymov = false
-  w:remove(self)
 end
 
 function anykey(...)
@@ -102,8 +102,6 @@ function BPlayer:move(dt, w)
   self.x, self.y, cols = w:move(self, self.x, self.y)
   -- Check for collisions
   for i, v in ipairs(cols) do
-    lua.tprint(v.other)
-    -- lua.tprint(lua.tablekeys(v))
     if cols[i].normal.y == -1 then
       self.yvel = 0
       self.ymov = false

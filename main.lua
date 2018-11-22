@@ -60,11 +60,6 @@ function drawLifeBar()
     ScreenWidth - 50, 15)
 end
 
-function spawnHero()
-  theHero = BPlayer.create("hero.png", 12, 32)
-  theHero:addToWorld(theWorld)
-end
-
 QUAD_NAMES = {
   [1]="filling",
   [2]="floor",
@@ -119,37 +114,36 @@ function love.keypressed(k)
   if k == "r" and gameOver then
     gameOver = false
     lifeCount = 3
-    spawnHero()
+    theHero:spawn(theWorld)
   end
 end
 
 function love.load()
   love.window.setMode(ScreenWidth, ScreenHeight)
   theWorld = bump.newWorld(TileSize)
+  theHero = BPlayer.create("hero.png", 12, 32)
+  theHero:spawn(theWorld)
   theMap = {
     tileset = BTileSet.create("tileset.png", TileSize, TileSize),
     board = ABoard
   }
 
   -- Game state
-  spawnHero()
   lifeCount = 3
   gameOver = false
 end
 
 function love.update(dt)
-  if theHero == nil then
-    return
+  if gameOver then return
   elseif theHero.y + theHero.h > ScreenHeight then
     theHero:die(theWorld)
-    theHero = nil
 
     -- Decrement life and maybe declare game over
     lifeCount = lifeCount - 1
     if lifeCount == 0 then
       gameOver = true
     else
-      spawnHero()
+      theHero:spawn(theWorld)
     end
   else
     theHero:update(dt, theWorld)
