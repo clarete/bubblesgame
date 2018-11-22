@@ -79,6 +79,11 @@ function anykey(...)
   return false
 end
 
+function collisionFilter(player, other)
+  if other.isBubblegum then return 'bounce' end
+  return 'slide'
+end
+
 function BPlayer:move(dt, w)
   local cols
   -- Handle Jump Request
@@ -103,12 +108,16 @@ function BPlayer:move(dt, w)
   self.x = self.x + self.direction * self.xvel * dt
   self.y = self.y + self.yvel * dt
   -- Apply collision detection
-  self.x, self.y, cols = w:move(self, self.x, self.y)
+  self.x, self.y, cols = w:move(self, self.x, self.y, collisionFilter)
   -- Check for collisions
   for i, v in ipairs(cols) do
     if cols[i].normal.y == -1 then
-      self.yvel = 0
-      self.ymov = false
+      if v.other.isBubblegum then
+        self.yvel = -self.yvel
+      else
+        self.yvel = 0
+        self.ymov = false
+      end
     end
     if cols[i].normal.x ~= 0 then
       self.xvel = 0

@@ -70,8 +70,8 @@ QUAD_NAMES = {
   [7]="water-concave-right",
   [8]="water-full",
   [9]="bubblegum-left",
-  [10]="bubblebum-full",
-  [11]="bubblebum-left",
+  [10]="bubblegum-full",
+  [11]="bubblegum-left",
 }
 
 function drawMap(m)
@@ -80,7 +80,9 @@ function drawMap(m)
       if quadIndex > 0 then
         local block = m.tileset:drawQuad(quadIndex, columnIndex, rowIndex)
         block.name = QUAD_NAMES[quadIndex];
-        if not lua.sswith(block.name, 'water') then
+        block.isBubblegum = lua.sswith(block.name, 'bubblegum')
+        block.isWater = lua.sswith(block.name, 'water')
+        if not block.isWater then
           theWorld:add(block, block.x, block.y, block.w, block.h)
         end
       end
