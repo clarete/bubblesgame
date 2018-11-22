@@ -134,16 +134,15 @@ function love.load()
 end
 
 function love.update(dt)
-  if gameOver then return
-  elseif theHero.y + theHero.h > ScreenHeight then
+  if gameOver then
+    return
+  elseif theHero:below(ScreenHeight) then
     theHero:die(theWorld)
-
-    -- Decrement life and maybe declare game over
     lifeCount = lifeCount - 1
-    if lifeCount == 0 then
-      gameOver = true
-    else
+    if lifeCount > 0 then
       theHero:spawn(theWorld)
+    else
+      gameOver = true
     end
   else
     theHero:update(dt, theWorld)

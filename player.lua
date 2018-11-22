@@ -50,6 +50,10 @@ function BPlayer:physics(dt)
   self.xmov = math.floor(self.xvel) > 30
 end
 
+function BPlayer:below(v)
+  return (self.y + self.h) > v
+end
+
 -- Add collision box to player
 function BPlayer:spawn(w)
   w:add(self, self.x, self.y, self.w, self.h)
