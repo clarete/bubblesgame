@@ -1,6 +1,7 @@
 local bump = require 'libs.bump'
 local lua = require 'lua'
 local BPlayer = require 'player'
+local BBGum = require 'bubblegum'
 
 -- Globals:
 ----------:
@@ -54,10 +55,10 @@ function BTileSet:drawQuad(index, r, c)
   return {x=x, y=y, w=self.tileWidth, h=self.tileHeight}
 end
 
-function drawLifeBar()
+function drawGameBar()
   love.graphics.print(
-    ("Life: %d"):format(lifeCount),
-    ScreenWidth - 50, 15)
+    ("Items: %d, Life: %d"):format(itemCount, lifeCount),
+    ScreenWidth - 100, 15)
 end
 
 QUAD_NAMES = {
@@ -100,18 +101,40 @@ ABoard = {
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-  {2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0},
+  {2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0},
   {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
   {1, 0, 0, 0, 0, 0, 0, 0, 4, 2, 2, 5, 0, 0, 0, 0, 1, 0, 0, 0},
-  {1, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3},
+  {1, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2},
   {1, 0, 1, 1, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 1, 1, 1},
   {1, 2, 1, 1, 6, 7, 1, 2, 2, 2, 2, 2, 1, 8, 8, 8, 1, 1, 1, 1}
 }
 
 function startGameState()
+  itemCount = 0
   lifeCount = 3
   gameOver = false
+  local bbx, bby = theWorld:toWorld(2, 14)
+  local gum = BBGum.create("bubblegum.png", 24, 24, bbx+4, bby)
+  gum:spawn(theWorld)
+  visibleItems = { gum }
+
   theHero:spawn(theWorld)
+end
+
+function drawVisibleItems()
+  for _, item in ipairs(visibleItems) do
+    item:draw()
+  end
+end
+
+function updateVisibleItems(dt, w)
+  for i, item in ipairs(visibleItems) do
+    item:update(dt, w)
+    if not theWorld:hasItem(item) then
+      visibleItems[i] = nil
+      itemCount = itemCount + 1
+    end
+  end
 end
 
 function love.keypressed(k)
@@ -131,13 +154,17 @@ function love.load()
     tileset = BTileSet.create("tileset.png", TileSize, TileSize),
     board = ABoard
   }
+
   startGameState()
 end
 
 function love.update(dt)
-  if gameOver then
-    return
-  elseif theHero:below(ScreenHeight) then
+  -- We're done here
+  if gameOver then return end
+
+  updateVisibleItems(dt, theWorld)
+
+  if theHero:below(ScreenHeight) then
     theHero:die(theWorld)
     lifeCount = lifeCount - 1
     if lifeCount > 0 then
@@ -157,7 +184,8 @@ function love.draw()
     love.graphics.print("Or 'Esc' to quit", ScreenWidth / 2 - 50, ScreenHeight / 2 + 40)
   else
     drawMap(theMap)
-    drawLifeBar()
+    drawGameBar()
+    drawVisibleItems()
     theHero:draw()
   end
 end

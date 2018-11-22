@@ -81,6 +81,7 @@ end
 
 function collisionFilter(player, other)
   if other.isBubblegum then return 'bounce' end
+  if other.isItem then return 'cross' end
   return 'slide'
 end
 
@@ -114,13 +115,15 @@ function BPlayer:move(dt, w)
     if cols[i].normal.y == -1 then
       if v.other.isBubblegum then
         self.yvel = -self.yvel
-      else
+      elseif not v.other.isItem then
         self.yvel = 0
         self.ymov = false
       end
     end
     if cols[i].normal.x ~= 0 then
-      self.xvel = 0
+      if not v.other.isItem then
+        self.xvel = 0
+      end
     end
   end
 end
