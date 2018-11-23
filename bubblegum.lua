@@ -42,8 +42,9 @@ function BBGum:update(dt, w)
   self.x, self.y, cols, len = w:move(self, self.x, self.y)
   for i, v in ipairs(cols) do
     if v.other.isPlayer then
-      self:capture(w)
-      break
+      return 'captured', v.other
+    elseif v.other.isWater then
+      return 'used', v.other
     end
     if v.normal.y == -1 then
       self.yvel = 0
@@ -60,7 +61,7 @@ function BBGum:spawn(w)
   w:add(self, self.x, self.y, self.w, self.h)
 end
 
-function BBGum:capture(w)
+function BBGum:die(w)
   w:remove(self)
 end
 

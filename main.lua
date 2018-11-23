@@ -136,12 +136,24 @@ function drawItems()
   end
 end
 
+function bubblegumifyWater(block)
+  block.isWater = false
+  block.isBubblegum = true
+  block.name = 'bubblegum-full'
+  block.index = 10
+end
+
 function updateItems(dt, w)
   for i, item in ipairs(availableItems) do
-    item:update(dt, w)
-    if not theWorld:hasItem(item) then
+    local state, other = item:update(dt, w)
+    if state == 'captured' then
       table.insert(capturedItems, item)
       availableItems[i] = nil
+      item:die(theWorld)
+    elseif state == 'used' then
+      availableItems[i] = nil
+      item:die(theWorld)
+      bubblegumifyWater(other)
     end
   end
 end
