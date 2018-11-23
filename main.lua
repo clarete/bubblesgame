@@ -75,21 +75,31 @@ QUAD_NAMES = {
   [11]="bubblegum-left",
 }
 
-function drawMap(m)
+function readMap(m)
   for rowIndex, row in ipairs(m.board) do
     for columnIndex, quadIndex in ipairs(row) do
       if quadIndex > 0 then
         local block = m.tileset:drawQuad(quadIndex, columnIndex, rowIndex)
-        block.name = QUAD_NAMES[quadIndex];
-        block.isBubblegum = lua.sswith(block.name, 'bubblegum')
-        block.isWater = lua.sswith(block.name, 'water')
-        if not block.isWater then
-          theWorld:add(block, block.x, block.y, block.w, block.h)
-        end
+        local name = QUAD_NAMES[quadIndex]
+        block.name = name
+        block.index = quadIndex
+        block.isBubblegum = lua.sswith(name, 'bubblegum')
+        block.isWater = lua.sswith(name, 'water')
+        theWorld:add(block, block.x, block.y, block.w, block.h)
+        table.insert(m.blocks, block)
       end
     end
   end
 end
+
+function drawMap(m)
+  local img = m.tileset.image
+  local quads = m.tileset.quads
+  for _, block in ipairs(m.blocks) do
+    love.graphics.draw(img, quads[block.index], block.x, block.y)
+  end
+end
+
 
 ABoard = {
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -166,9 +176,10 @@ function love.load()
   theHero = BPlayer.create("hero.png", 12, 32)
   theMap = {
     tileset = BTileSet.create("tileset.png", TileSize, TileSize),
-    board = ABoard
+    board = ABoard,
+    blocks = {}
   }
-
+  readMap(theMap)
   startGameState()
 end
 
@@ -192,6 +203,8 @@ function love.update(dt)
 end
 
 function love.draw()
+  love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+
   if gameOver then
     love.graphics.print("YOU SO DEAD :(", ScreenWidth / 2 - 50, ScreenHeight / 2)
     love.graphics.print("Press 'r' to restart", ScreenWidth / 2 - 50, ScreenHeight / 2 + 20)

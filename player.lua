@@ -80,6 +80,7 @@ end
 function collisionFilter(player, other)
   if other.isBubblegum then return 'bounce' end
   if other.isItem then return 'cross' end
+  if other.isWater then return 'cross' end
   return 'slide'
 end
 
@@ -110,16 +111,17 @@ function BPlayer:move(dt, w)
   self.x, self.y, cols = w:move(self, self.x, self.y, collisionFilter)
   -- Check for collisions
   for i, v in ipairs(cols) do
+    local filter = collisionFilter(nil, v.other)
     if cols[i].normal.y == -1 then
-      if v.other.isBubblegum then
+      if filter == 'bounce' then
         self.yvel = -self.yvel
-      elseif not v.other.isItem then
+      elseif filter == 'slide' then
         self.yvel = 0
         self.ymov = false
       end
     end
     if cols[i].normal.x ~= 0 then
-      if not v.other.isItem then
+      if filter ~= 'cross' then
         self.xvel = 0
       end
     end
