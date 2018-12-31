@@ -185,7 +185,7 @@ end
 function love.load()
   love.window.setMode(ScreenWidth, ScreenHeight)
   theWorld = bump.newWorld(TileSize)
-  theHero = BPlayer.create("hero.png", 12, 32)
+  theHero = BPlayer.create("hero2.png", 18, 44)
   theMap = {
     tileset = BTileSet.create("tileset.png", TileSize, TileSize),
     board = ABoard,
@@ -215,6 +215,8 @@ function love.update(dt)
 end
 
 function love.draw()
+  local bg = love.graphics.newImage ("bg.png")
+  love.graphics.draw (bg)
   love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
 
   if gameOver then
