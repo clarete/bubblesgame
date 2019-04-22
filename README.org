@@ -1,0 +1,36 @@
+* Bubbles
+
+Small Game made with Lua and Love.
+
+It's not finished so you can't really win, but it's cool to walk
+around the scenario, grab the item, drop it in places and stuff.
+
+** How to run
+
+   Install [[https://love2d.org/][LÖVE]] in your computer. It works on GNU/Linux, MacOS &
+   Windows.
+
+   Then download this repository somwhere in your file system and run
+   the ~love~ binary passing the downloaded directory as the only
+   parameter:
+
+   #+begin_src sh
+   $ git clone git@github.com:clarete/bubblesgame.git
+   $ love bubblesgame
+   #+end_src
+
+** Keyboard Controls
+
+   | Action   | Key   |
+   |----------+-------|
+   | Left     | ~a~   |
+   | Right    | ~d~   |
+   | Jump     | ~w~   |
+   | Use Item | ~i~   |
+   | Quit     | ~Esc~ |
+
+** Screenshot
+
+   This is how it looks
+
+   [[./screenshot.jpg]]
